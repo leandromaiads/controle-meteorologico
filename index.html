@@ -90,6 +90,7 @@
       border-radius: 6px;
       color: var(--text);
       font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
@@ -182,7 +183,7 @@
       <p>Informe o local ou capture sua posição via GPS.</p>
     </div>
 
-    <form id="geoForm">
+    <form id="geoForm" novalidate>
       <div class="form-group">
         <label for="local">Identificação do Local *</label>
         <input 
@@ -211,7 +212,9 @@
             type="text" 
             id="latitude" 
             name="entry.1887288141" 
-            placeholder="-22.9064" 
+            inputmode="decimal"
+            pattern="^-?\d+\.\d+$"
+            placeholder="-23.027000" 
             required 
           />
         </div>
@@ -222,7 +225,9 @@
             type="text" 
             id="longitude" 
             name="entry.1670270912" 
-            placeholder="-47.0616" 
+            inputmode="decimal"
+            pattern="^-?\d+\.\d+$"
+            placeholder="-47.061600" 
             required 
           />
         </div>
@@ -237,10 +242,10 @@
   </main>
 
   <script>
-    // Endpoint de submissão direta do Google Forms (substituindo /viewform por /formResponse)
     const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSdZwLqHshTRbl1pyjxTPa0rW4NKC58YCyR1fIDq8sGcmUMgyw/formResponse";
 
     const form = document.getElementById("geoForm");
+    const localInput = document.getElementById("local");
     const btnGps = document.getElementById("btnGps");
     const gpsText = document.getElementById("gpsText");
     const btnSubmit = document.getElementById("btnSubmit");
@@ -252,6 +257,51 @@
       statusBanner.textContent = message;
       statusBanner.className = `status-banner ${type}`;
     }
+
+    // Filtra em tempo real: converte vírgula em ponto, mantém apenas dígitos, '-' inicial e um único '.'
+    function sanitizeCoordinate(raw) {
+      let cleaned = raw.replace(/,/g, ".").replace(/[^0-9.-]/g, "");
+
+      const isNegative = cleaned.startsWith("-");
+      cleaned = cleaned.replace(/-/g, "");
+      if (isNegative) cleaned = "-" + cleaned;
+
+      const parts = cleaned.split(".");
+      if (parts.length > 2) {
+        cleaned = parts[0] + "." + parts.slice(1).join("");
+      }
+
+      return cleaned;
+    }
+
+    // Formata para parte inteira + ponto + 6 casas decimais (ex: -23.027 -> -23.027000)
+    function formatDecimalCoordinate(raw, decimals = 6) {
+      const cleaned = sanitizeCoordinate(raw);
+      if (!cleaned || cleaned === "-" || cleaned === "." || cleaned === "-.") {
+        return null;
+      }
+
+      const num = Number(cleaned);
+      if (!Number.isFinite(num)) {
+        return null;
+      }
+
+      return num.toFixed(decimals);
+    }
+
+    // Aplica sanitização durante a digitação e normalização ao sair do campo
+    [latInput, lngInput].forEach((input) => {
+      input.addEventListener("input", (e) => {
+        e.target.value = sanitizeCoordinate(e.target.value);
+      });
+
+      input.addEventListener("blur", (e) => {
+        const formatted = formatDecimalCoordinate(e.target.value);
+        if (formatted !== null) {
+          e.target.value = formatted;
+        }
+      });
+    });
 
     // Captura de coordenadas via API nativa do navegador
     btnGps.addEventListener("click", () => {
@@ -286,9 +336,36 @@
       );
     });
 
-    // Envio assíncrono para o Google Forms
+    // Validação e envio assíncrono para o Google Forms
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+
+      const localValue = localInput.value.trim();
+      const formattedLat = formatDecimalCoordinate(latInput.value);
+      const formattedLng = formatDecimalCoordinate(lngInput.value);
+
+      if (!localValue) {
+        showStatus("Informe a identificação do local.", "error");
+        localInput.focus();
+        return;
+      }
+
+      if (formattedLat === null || Number(formattedLat) < -90 || Number(formattedLat) > 90) {
+        showStatus("Latitude inválida. Use formato decimal entre -90.000000 e 90.000000.", "error");
+        latInput.focus();
+        return;
+      }
+
+      if (formattedLng === null || Number(formattedLng) < -180 || Number(formattedLng) > 180) {
+        showStatus("Longitude inválida. Use formato decimal entre -180.000000 e 180.000000.", "error");
+        lngInput.focus();
+        return;
+      }
+
+      // Garante que os inputs estejam normalizados antes de montar o FormData
+      localInput.value = localValue;
+      latInput.value = formattedLat;
+      lngInput.value = formattedLng;
 
       btnSubmit.disabled = true;
       btnSubmit.textContent = "Enviando...";
@@ -306,13 +383,3 @@
         form.reset();
         gpsText.textContent = "Capturar Latitude e Longitude via GPS";
         showStatus("Dados registrados com sucesso na planilha do Forms!", "success");
-      } catch (err) {
-        showStatus("Falha de rede ao enviar os dados. Verifique sua conexão.", "error");
-      } finally {
-        btnSubmit.disabled = false;
-        btnSubmit.textContent = "Enviar Registro";
-      }
-    });
-  </script>
-</body>
-</html>
