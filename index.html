@@ -6,22 +6,23 @@
   <title>Registro de Localização</title>
   <style>
     :root {
-      --bg: #f4f6f9;
-      --surface: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #d1d5db;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --secondary: #0f172a;
-      --secondary-hover: #1e293b;
-      --success-bg: #ecfdf5;
-      --success-text: #065f46;
-      --success-border: #a7f3d0;
+      --green-950: #052e16;
+      --green-800: #166534;
+      --green-700: #15803d;
+      --green-600: #16a34a;
+      --green-500: #22c55e;
+      --green-100: #dcfce7;
+      --green-50: #f0fdf4;
+      --white: #ffffff;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --border: #bbf7d0;
       --error-bg: #fef2f2;
-      --error-text: #991b1b;
+      --error-text: #b91c1c;
       --error-border: #fecaca;
-      --radius: 10px;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow: 0 20px 45px -15px rgba(21, 128, 61, 0.18), 0 4px 12px rgba(5, 46, 22, 0.05);
     }
 
     * {
@@ -31,446 +32,526 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(160deg, var(--green-50) 0%, var(--white) 55%, var(--green-100) 100%);
+      color: var(--green-950);
+      min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 1rem;
+      padding: 24px 16px;
       line-height: 1.5;
     }
 
     .card {
       width: 100%;
-      max-width: 460px;
-      background: var(--surface);
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 1.75rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+      max-width: 520px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    header {
-      margin-bottom: 1.5rem;
+    .card-header {
+      background: linear-gradient(135deg, var(--green-800), var(--green-600));
+      color: var(--white);
+      padding: 28px 28px 24px;
     }
 
-    h1 {
-      font-size: 1.35rem;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.16);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .card-header h1 {
+      font-size: 1.5rem;
       font-weight: 700;
       letter-spacing: -0.02em;
+      margin-bottom: 4px;
     }
 
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-top: 0.25rem;
+    .card-header p {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.88);
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
+    .card-body {
+      padding: 28px;
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
+    .form-group {
+      margin-bottom: 20px;
     }
 
     .coords-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+      gap: 14px;
     }
 
     label {
+      display: block;
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text);
+      color: var(--green-950);
+      margin-bottom: 6px;
     }
 
-    input {
+    .input-control {
       width: 100%;
-      padding: 0.7rem 0.85rem;
+      padding: 12px 14px;
       font-size: 0.95rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: #fff;
-      color: var(--text);
-      transition: border-color 0.15s, box-shadow 0.15s;
+      color: var(--green-950);
+      background: var(--white);
+      border: 1.5px solid #d1d5db;
+      border-radius: var(--radius-md);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
 
-    input:focus {
+    .input-control::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-control:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      border-color: var(--green-600);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.16);
+      background: var(--white);
     }
 
-    input.invalid {
-      border-color: #dc2626;
+    .input-control.is-invalid {
+      border-color: var(--error-text);
+      background: var(--error-bg);
+    }
+
+    .input-control.is-invalid:focus {
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.14);
     }
 
     .hint {
+      display: block;
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--slate-500);
+      margin-top: 5px;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background-color 0.15s, opacity 0.15s;
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-gps {
-      background-color: var(--secondary);
-      color: #fff;
-    }
-
-    .btn-gps:hover:not(:disabled) {
-      background-color: var(--secondary-hover);
-    }
-
-    .btn-submit {
-      background-color: var(--primary);
-      color: #fff;
-      margin-top: 0.25rem;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background-color: var(--primary-hover);
-    }
-
-    .status {
+    .field-error {
       display: none;
-      padding: 0.75rem 0.9rem;
-      border-radius: var(--radius);
-      font-size: 0.875rem;
-      border: 1px solid transparent;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--error-text);
+      margin-top: 5px;
     }
 
-    .status.show {
+    .field-error.visible {
       display: block;
     }
 
-    .status.success {
-      background: var(--success-bg);
-      color: var(--success-text);
-      border-color: var(--success-border);
+    .gps-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--green-800);
+      background: var(--green-50);
+      border: 1.5px dashed var(--green-500);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     }
 
-    .status.error {
+    .gps-btn:hover:not(:disabled) {
+      background: var(--green-100);
+      border-color: var(--green-700);
+    }
+
+    .gps-btn:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .gps-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .submit-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--green-700);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 16px rgba(21, 128, 61, 0.25);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: var(--green-800);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .status-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .status-banner.visible {
+      display: flex;
+    }
+
+    .status-banner.success {
+      background: var(--green-50);
+      color: var(--green-800);
+      border: 1px solid var(--border);
+    }
+
+    .status-banner.error {
       background: var(--error-bg);
       color: var(--error-text);
-      border-color: var(--error-border);
-    }
-
-    .status.info {
-      background: #eff6ff;
-      color: #1e40af;
-      border-color: #bfdbfe;
+      border: 1px solid var(--error-border);
     }
 
     .spinner {
       width: 16px;
       height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      border-top-color: #fff;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .is-loading .spinner {
+      display: inline-block;
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    @media (max-width: 420px) {
+    @media (max-width: 480px) {
+      .card-header,
+      .card-body {
+        padding: 22px 18px;
+      }
+
       .coords-grid {
         grid-template-columns: 1fr;
-      }
-      .card {
-        padding: 1.25rem;
+        gap: 0;
       }
     }
   </style>
 </head>
 <body>
   <main class="card">
-    <header>
-      <h1>Registrar Coordenadas</h1>
-      <p class="subtitle">Preencha o local e capture ou informe a latitude e longitude.</p>
+    <header class="card-header">
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        Geolocalização
+      </div>
+      <h1>Cadastro de Local</h1>
+      <p>Informe o nome do local e as coordenadas decimais separadas por ponto.</p>
     </header>
 
-    <form id="locationForm" novalidate>
-      <div class="field">
-        <label for="local">Local</label>
-        <input
-          type="text"
-          id="local"
-          name="local"
-          placeholder="Ex.: Parque Taquaral - Portão 1"
-          autocomplete="off"
-          required
-        />
-      </div>
+    <section class="card-body">
+      <div id="statusBanner" class="status-banner" role="status" aria-live="polite"></div>
 
-      <button type="button" id="btnGps" class="btn btn-gps">
-        Capturar localização atual (GPS)
-      </button>
-
-      <div class="coords-grid">
-        <div class="field">
-          <label for="latitude">Latitude</label>
+      <form id="locationForm" novalidate>
+        <div class="form-group">
+          <label for="local">Local</label>
           <input
+            id="local"
+            name="entry.696170020"
             type="text"
-            id="latitude"
-            name="latitude"
-            inputmode="decimal"
-            placeholder="-23.027000"
+            class="input-control"
+            placeholder="Ex.: Parque Taquaral"
             autocomplete="off"
             required
           />
+          <span id="localError" class="field-error">Informe o nome ou a descrição do local.</span>
         </div>
 
-        <div class="field">
-          <label for="longitude">Longitude</label>
-          <input
-            type="text"
-            id="longitude"
-            name="longitude"
-            inputmode="decimal"
-            placeholder="-47.060830"
-            autocomplete="off"
-            required
-          />
+        <button type="button" id="gpsBtn" class="gps-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+          </svg>
+          <span id="gpsBtnText">Preencher com minha localização atual</span>
+        </button>
+
+        <div class="coords-grid">
+          <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input
+              id="latitude"
+              name="entry.1887288141"
+              type="text"
+              inputmode="decimal"
+              class="input-control"
+              placeholder="-23.027000"
+              autocomplete="off"
+              required
+            />
+            <span class="hint">Entre -90 e 90 (ex.: -23.027000)</span>
+            <span id="latitudeError" class="field-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="longitude">Longitude</label>
+            <input
+              id="longitude"
+              name="entry.1670270912"
+              type="text"
+              inputmode="decimal"
+              class="input-control"
+              placeholder="-47.060800"
+              autocomplete="off"
+              required
+            />
+            <span class="hint">Entre -180 e 180 (ex.: -47.060800)</span>
+            <span id="longitudeError" class="field-error"></span>
+          </div>
         </div>
-      </div>
 
-      <p class="hint">Formato decimal com ponto (ex.: -23.027000). Vírgulas são convertidas automaticamente.</p>
-
-      <div id="statusBox" class="status" role="status" aria-live="polite"></div>
-
-      <button type="submit" id="btnSubmit" class="btn btn-submit">
-        Enviar registro
-      </button>
-    </form>
+        <button type="submit" id="submitBtn" class="submit-btn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="submitBtnText">Enviar dados</span>
+        </button>
+      </form>
+    </section>
   </main>
 
   <script>
     (() => {
-      const FORM_ACTION =
-        "https://docs.google.com/forms/d/e/1FAIpQLSdZwLqHshTRbl1pyjxTPa0rW4NKC58YCyR1fIDq8sGcmUMgyw/formResponse";
+      const GOOGLE_FORM_ACTION =
+        'https://docs.google.com/forms/d/e/1FAIpQLSdZwLqHshTRbl1pyjxTPa0rW4NKC58YCyR1fIDq8sGcmUMgyw/formResponse';
 
-      const ENTRY_IDS = {
-        local: "entry.696170020",
-        latitude: "entry.1887288141",
-        longitude: "entry.1670270912",
+      const FIELD_IDS = {
+        local: 'entry.696170020',
+        latitude: 'entry.1887288141',
+        longitude: 'entry.1670270912',
       };
 
-      const DECIMAL_PLACES = 6;
-      const STRICT_DECIMAL_REGEX = /^-?\d+\.\d+$/;
+      // Exige sinal negativo opcional + parte inteira + ponto + parte decimal (ex.: -23.027000)
+      const COORD_REGEX = /^-?\d+\.\d+$/;
 
-      const form = document.getElementById("locationForm");
-      const localInput = document.getElementById("local");
-      const latInput = document.getElementById("latitude");
-      const lngInput = document.getElementById("longitude");
-      const btnGps = document.getElementById("btnGps");
-      const btnSubmit = document.getElementById("btnSubmit");
-      const statusBox = document.getElementById("statusBox");
+      const form = document.getElementById('locationForm');
+      const localInput = document.getElementById('local');
+      const latInput = document.getElementById('latitude');
+      const lngInput = document.getElementById('longitude');
+      const gpsBtn = document.getElementById('gpsBtn');
+      const gpsBtnText = document.getElementById('gpsBtnText');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const statusBanner = document.getElementById('statusBanner');
 
-      function showStatus(message, type) {
-        statusBox.textContent = message;
-        statusBox.className = `status show ${type}`;
+      function showStatus(type, message) {
+        statusBanner.className = `status-banner visible ${type}`;
+        statusBanner.textContent = message;
       }
 
       function clearStatus() {
-        statusBox.textContent = "";
-        statusBox.className = "status";
+        statusBanner.className = 'status-banner';
+        statusBanner.textContent = '';
       }
 
-      // Remove caracteres inválidos em tempo real e converte vírgula em ponto
-      function sanitizeCoordinateInput(raw) {
-        let cleaned = raw.replace(/,/g, ".").replace(/[^0-9.-]/g, "");
+      function setFieldError(input, errorElId, message) {
+        const errorEl = document.getElementById(errorElId);
+        if (message) {
+          input.classList.add('is-invalid');
+          errorEl.textContent = message;
+          errorEl.classList.add('visible');
+          return false;
+        }
+        input.classList.remove('is-invalid');
+        errorEl.textContent = '';
+        errorEl.classList.remove('visible');
+        return true;
+      }
 
-        // Mantém o sinal negativo apenas na primeira posição
-        const isNegative = cleaned.startsWith("-");
-        cleaned = cleaned.replace(/-/g, "");
-        if (isNegative) cleaned = "-" + cleaned;
+      // Mantém apenas dígitos, sinal negativo no início e um único ponto decimal
+      function sanitizeCoordinate(rawValue) {
+        let cleaned = rawValue.replace(/,/g, '.').replace(/[^0-9.-]/g, '');
+        const isNegative = cleaned.startsWith('-');
+        cleaned = cleaned.replace(/-/g, '');
 
-        // Mantém apenas o primeiro ponto decimal
-        const parts = cleaned.split(".");
+        const parts = cleaned.split('.');
         if (parts.length > 2) {
-          cleaned = parts[0] + "." + parts.slice(1).join("");
+          cleaned = `${parts[0]}.${parts.slice(1).join('')}`;
         }
 
-        return cleaned;
+        return (isNegative ? '-' : '') + cleaned;
       }
 
-      // Valida intervalo geográfico e padroniza para parte inteira + decimal com ponto
-      function parseAndFormatCoordinate(raw, min, max) {
-        const sanitized = sanitizeCoordinateInput(raw.trim());
-        if (!sanitized || sanitized === "-" || sanitized === "." || sanitized === "-.") {
-          return null;
+      function validateCoordinate(input, errorElId, min, max, label) {
+        const value = input.value.trim();
+
+        if (!value) {
+          return setFieldError(input, errorElId, `Informe a ${label}.`);
         }
 
-        const numeric = Number(sanitized);
-        if (!Number.isFinite(numeric) || numeric < min || numeric > max) {
-          return null;
+        if (!COORD_REGEX.test(value)) {
+          return setFieldError(
+            input,
+            errorElId,
+            'Use apenas parte inteira e decimal separadas por ponto (ex.: -23.027000).'
+          );
         }
 
-        const formatted = numeric.toFixed(DECIMAL_PLACES);
-        return STRICT_DECIMAL_REGEX.test(formatted) ? formatted : null;
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue < min || numericValue > max) {
+          return setFieldError(
+            input,
+            errorElId,
+            `A ${label} deve estar entre ${min} e ${max}.`
+          );
+        }
+
+        return setFieldError(input, errorElId, '');
       }
 
-      function bindCoordinateField(input, min, max) {
-        input.addEventListener("input", () => {
-          const cursorPos = input.selectionStart;
-          const sanitized = sanitizeCoordinateInput(input.value);
-          if (input.value !== sanitized) {
-            input.value = sanitized;
-            input.setSelectionRange(cursorPos, cursorPos);
+      function validateLocal() {
+        const valid = localInput.value.trim().length > 0;
+        return setFieldError(
+          localInput,
+          'localError',
+          valid ? '' : 'Informe o nome ou a descrição do local.'
+        );
+      }
+
+      [latInput, lngInput].forEach((input) => {
+        input.addEventListener('input', (event) => {
+          const sanitized = sanitizeCoordinate(event.target.value);
+          if (event.target.value !== sanitized) {
+            event.target.value = sanitized;
           }
-          input.classList.remove("invalid");
+          clearStatus();
         });
+      });
 
-        input.addEventListener("blur", () => {
-          if (!input.value.trim()) return;
-          const formatted = parseAndFormatCoordinate(input.value, min, max);
-          if (formatted) {
-            input.value = formatted;
-            input.classList.remove("invalid");
-          } else {
-            input.classList.add("invalid");
-          }
-        });
-      }
+      localInput.addEventListener('blur', validateLocal);
+      latInput.addEventListener('blur', () =>
+        validateCoordinate(latInput, 'latitudeError', -90, 90, 'latitude')
+      );
+      lngInput.addEventListener('blur', () =>
+        validateCoordinate(lngInput, 'longitudeError', -180, 180, 'longitude')
+      );
 
-      bindCoordinateField(latInput, -90, 90);
-      bindCoordinateField(lngInput, -180, 180);
-
-      btnGps.addEventListener("click", () => {
+      gpsBtn.addEventListener('click', () => {
         clearStatus();
 
-        if (!("geolocation" in navigator)) {
-          showStatus("Seu navegador não suporta geolocalização.", "error");
+        if (!('geolocation' in navigator)) {
+          showStatus('error', 'Seu navegador não suporta captura de geolocalização.');
           return;
         }
 
-        const originalLabel = btnGps.textContent;
-        btnGps.disabled = true;
-        btnGps.innerHTML = '<span class="spinner" aria-hidden="true"></span> Obtendo GPS...';
+        gpsBtn.disabled = true;
+        gpsBtnText.textContent = 'Obtendo coordenadas...';
 
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const lat = position.coords.latitude.toFixed(DECIMAL_PLACES);
-            const lng = position.coords.longitude.toFixed(DECIMAL_PLACES);
-            const accuracy = Math.round(position.coords.accuracy);
-
-            latInput.value = lat;
-            lngInput.value = lng;
-            latInput.classList.remove("invalid");
-            lngInput.classList.remove("invalid");
-
-            showStatus(`Coordenadas capturadas (precisão aproximada: ±${accuracy} m).`, "info");
-            btnGps.disabled = false;
-            btnGps.textContent = originalLabel;
+            latInput.value = position.coords.latitude.toFixed(6);
+            lngInput.value = position.coords.longitude.toFixed(6);
+            validateCoordinate(latInput, 'latitudeError', -90, 90, 'latitude');
+            validateCoordinate(lngInput, 'longitudeError', -180, 180, 'longitude');
+            gpsBtn.disabled = false;
+            gpsBtnText.textContent = 'Preencher com minha localização atual';
           },
-          (error) => {
+          (err) => {
             const messages = {
-              1: "Permissão de localização negada. Libere o acesso ou digite manualmente.",
-              2: "Sinal de localização indisponível no momento.",
-              3: "Tempo esgotado ao buscar o GPS. Tente novamente.",
+              1: 'Permissão de localização negada. Digite as coordenadas manualmente.',
+              2: 'Não foi possível determinar sua localização atual.',
+              3: 'Tempo esgotado ao buscar o GPS. Tente novamente.',
             };
-            showStatus(messages[error.code] || "Não foi possível obter a localização.", "error");
-            btnGps.disabled = false;
-            btnGps.textContent = originalLabel;
+            showStatus('error', messages[err.code] || 'Erro ao obter localização.');
+            gpsBtn.disabled = false;
+            gpsBtnText.textContent = 'Preencher com minha localização atual';
           },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0,
-          }
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
       });
 
-      form.addEventListener("submit", async (event) => {
+      form.addEventListener('submit', async (event) => {
         event.preventDefault();
         clearStatus();
 
-        const local = localInput.value.trim();
-        const formattedLat = parseAndFormatCoordinate(latInput.value, -90, 90);
-        const formattedLng = parseAndFormatCoordinate(lngInput.value, -180, 180);
+        const isLocalValid = validateLocal();
+        const isLatValid = validateCoordinate(latInput, 'latitudeError', -90, 90, 'latitude');
+        const isLngValid = validateCoordinate(lngInput, 'longitudeError', -180, 180, 'longitude');
 
-        localInput.classList.toggle("invalid", !local);
-        latInput.classList.toggle("invalid", !formattedLat);
-        lngInput.classList.toggle("invalid", !formattedLng);
-
-        if (!local) {
-          showStatus("Informe o nome ou descrição do local.", "error");
-          localInput.focus();
+        if (!isLocalValid || !isLatValid || !isLngValid) {
+          showStatus('error', 'Revise os campos destacados antes de enviar.');
           return;
         }
-
-        if (!formattedLat) {
-          showStatus("Latitude inválida. Use um valor entre -90 e 90 (ex.: -23.027000).", "error");
-          latInput.focus();
-          return;
-        }
-
-        if (!formattedLng) {
-          showStatus("Longitude inválida. Use um valor entre -180 e 180 (ex.: -47.060830).", "error");
-          lngInput.focus();
-          return;
-        }
-
-        // Garante que os inputs exibam o valor exato que será transmitido
-        latInput.value = formattedLat;
-        lngInput.value = formattedLng;
 
         const payload = new URLSearchParams();
-        payload.append(ENTRY_IDS.local, local);
-        payload.append(ENTRY_IDS.latitude, formattedLat);
-        payload.append(ENTRY_IDS.longitude, formattedLng);
+        payload.append(FIELD_IDS.local, localInput.value.trim());
+        payload.append(FIELD_IDS.latitude, latInput.value.trim());
+        payload.append(FIELD_IDS.longitude, lngInput.value.trim());
 
-        const originalLabel = btnSubmit.textContent;
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<span class="spinner" aria-hidden="true"></span> Enviando...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('is-loading');
+        submitBtnText.textContent = 'Enviando...';
 
         try {
-          await fetch(FORM_ACTION, {
-            method: "POST",
-            mode: "no-cors",
+          await fetch(GOOGLE_FORM_ACTION, {
+            method: 'POST',
+            mode: 'no-cors',
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             },
             body: payload.toString(),
           });
 
-          showStatus(
-            `Registro enviado: "${local}" (${formattedLat}, ${formattedLng}).`,
-            "success"
-          );
           form.reset();
-        } catch (err) {
-          showStatus("Falha de conexão ao enviar. Verifique sua internet e tente novamente.", "error");
+          showStatus('success', 'Registro enviado com sucesso para a planilha do Google Forms.');
+        } catch (error) {
+          showStatus('error', 'Falha de rede ao enviar os dados. Verifique sua conexão e tente novamente.');
         } finally {
-          btnSubmit.disabled = false;
-          btnSubmit.textContent = originalLabel;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('is-loading');
+          submitBtnText.textContent = 'Enviar dados';
         }
       });
     })();
